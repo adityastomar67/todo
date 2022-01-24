@@ -27,7 +27,7 @@ create_table()
 def insert_todo(todo: Todo):
     c.execute("SELECT count(*) FROM todo")
     count = c.fetchone()[0]
-    todo.positon = count if count else 0
+    todo.position = count if count else 0
     with conn:
         c.execute(
             "INSERT INTO todo VALUES (:task, :category, :date_added, :date_completed, :status, :position)",
@@ -56,14 +56,14 @@ def delete_todo(position):
     count = c.fetchone()[0]
 
     with conn:
-        c.execute("DELETE FROM todo WHERE position=:position", {"position": position})
+        c.execute("DELETE FROM todo WHERE position = :position", {"position": position})
         for pos in range(position + 1, count):
             change_position(pos, pos - 1, False)
 
 
 def change_position(old_position: int, new_position: int, commit: True):
     c.execute(
-        "Update todo SET position=:new_position WHERE position=:old_position",
+        "Update todo SET position = :new_position WHERE position = :old_position",
         {"position": old_position, "new_position": new_position},
     )
     if commit:
@@ -92,9 +92,9 @@ def update_todo(psoition: int, task: str, category: str):
 def complete_todo(position: int):
     with conn:
         c.execute(
-            "UPDATE todo SET status=2, date_completed=:date_completed WHERE position=:position",
+            "UPDATE todo SET status = 2, date_completed = :date_completed WHERE position = :position",
             {
-                "date_completed": datetime.datetime.now().isoformat(),
                 "position": position,
+                "date_completed": datetime.datetime.now().isoformat(),
             },
         )
